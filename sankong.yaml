@@ -50,9 +50,9 @@ action:
   data:
     entity_id: >
       {% if trigger.from_state.entity_id == entity_1 %}
-        {{ entity_2 }}, {{ entity_3 }}
+      {{ entity_2 }}, {{ entity_3 }}
       {% elif trigger.from_state.entity_id == entity_2 %}
-        {{ entity_1 }}, {{ entity_3 }}
+      {{ entity_1 }}, {{ entity_3 }}
       {% else %}
-        {{ entity_1 }}, {{ entity_2 }}
+      {{ entity_1 }}, {{ entity_2 }}
       {% endif %}
