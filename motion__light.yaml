@@ -2,7 +2,7 @@ blueprint:
   name: 感应开灯
   description: 人体传感器检测到人开灯，无人延时关灯
   domain: automation
-  source_url: https://github.com/se7en7777777/blueprints/blob/main/motion_light.yaml
+  source_url: https://github.com/se7en7777777/blueprints/blob/main/motion__light.yaml
   input:
     motion_entity:
       name: 人体传感器
