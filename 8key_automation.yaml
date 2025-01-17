@@ -1,0 +1,87 @@
+blueprint:
+  name: 八键绑定场景1
+  description: 八键开关四场景绑定情景模式
+  domain: automation
+  input:
+    entity_1:
+      name: 场景按键5（下部分第一个按键，开关5）
+      selector:
+        entity:
+          domain: switch
+    entity_2:
+      name: 按键5绑定的情景模式
+      selector:
+        entity:
+          domain: script
+    entity_3:
+      name: 场景按键6（下部分第二个按键，开关6）
+      selector:
+        entity:
+          domain: switch
+    entity_4:
+      name: 按键6绑定的情景模式
+      selector:
+        entity:
+          domain: script
+    entity_5:
+      name: 场景按键7（下部分第三个按键，开关7）
+      selector:
+        entity:
+          domain: switch
+    entity_6:
+      name: 按键7绑定的情景模式
+      selector:
+        entity:
+          domain: script
+    entity_7:
+      name: 场景按键8（下部分第四个按键，开关8）
+      selector:
+        entity:
+          domain: switch
+    entity_8:
+      name: 按键8绑定的情景模式
+      selector:
+        entity:
+          domain: script
+  source_url: https://github.com/se7en7777777
+mode: restart
+max_exceeded: silent
+variables:
+  entity_map:
+    entity_1: !input entity_1
+    entity_2: !input entity_2
+    entity_3: !input entity_3
+    entity_4: !input entity_4
+    entity_5: !input entity_5
+    entity_6: !input entity_6
+    entity_7: !input entity_7
+    entity_8: !input entity_8
+trigger:
+- platform: state
+  entity_id:
+    - !input entity_1
+    - !input entity_3
+    - !input entity_5
+    - !input entity_7
+  to:
+    - 'off'
+    - 'on'
+
+action:
+- service: homeassistant.turn_on
+  data:
+    entity_id: >
+      {% if trigger.entity_id == entity_map.entity_1 %}
+        {{ entity_map.entity_2 }}
+      {% elif trigger.entity_id == entity_map.entity_3 %}
+        {{ entity_map.entity_4 }}
+      {% elif trigger.entity_id == entity_map.entity_5 %}
+        {{ entity_map.entity_6 }}
+      {% elif trigger.entity_id == entity_map.entity_7 %}
+        {{ entity_map.entity_8 }}
+      {% else %}
+        none
+      {% endif %}
+- service: homeassistant.turn_off
+  data:
+    entity_id: "{{ trigger.entity_id }}"
