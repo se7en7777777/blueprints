@@ -17,7 +17,7 @@ blueprint:
           entity:
             domain: light
     no_motion_wait:
-      name: 无人关灯等待时间
+      name: 无人关灯等待时间(秒)
       description: 传感器检测到无人关灯等待时间
       default: 120
       selector:
