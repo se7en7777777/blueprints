@@ -1,0 +1,70 @@
+blueprint:
+  name: 四向同步
+  description: 四个设备保持状态同步/双控，例如开关打开，灯就会开，反之，灯打开，开关也会同步打开
+  domain: automation
+  input:
+    entity_1:
+      name: 第一个设备,可以是灯，开关
+      selector:
+        entity: {}
+    entity_2:
+      name: 第二个设备,可以是灯，开关
+      selector:
+        entity: {}
+    entity_3:
+      name: 第三个设备,可以是灯，开关
+      selector:
+        entity: {}
+    entity_4:
+      name: 第四个设备,可以是灯，开关
+      selector:
+        entity: {}
+  source_url: https://github.com/se7en7777777/blueprints/blob/main/sikong.yaml
+mode: restart
+max_exceeded: silent
+variables:
+  entity_1: !input entity_1
+  entity_2: !input entity_2
+  entity_3: !input entity_3
+  entity_4: !input entity_4
+trigger:
+- platform: state
+  entity_id: !input entity_1
+  to:
+  - 'off'
+  - 'on'
+- platform: state
+  entity_id: !input entity_2
+  to:
+  - 'off'
+  - 'on'
+- platform: state
+  entity_id: !input entity_3
+  to:
+  - 'off'
+  - 'on'
+- platform: state
+  entity_id: !input entity_4
+  to:
+  - 'off'
+  - 'on'
+condition:
+- condition: template
+  value_template: '{{ states(entity_1) != states(entity_2) or states(entity_1) != states(entity_3) or states(entity_1) != states(entity_4) or states(entity_2) != states(entity_3) or states(entity_2) != states(entity_4) or states(entity_3) != states(entity_4) }}'
+- condition: template
+  value_template: '{{ trigger.to_state.state != trigger.from_state.state }}'
+- condition: template
+  value_template: '{{ trigger.to_state.context.parent_id is none or (trigger.to_state.context.id != this.context.id and trigger.to_state.context.parent_id != this.context.id) }}'
+action:
+- service: homeassistant.turn_{{ trigger.to_state.state }}
+  data:
+    entity_id: >
+      {% if trigger.from_state.entity_id == entity_1 %}
+      {{ entity_2 }}, {{ entity_3 }}, {{ entity_4 }}
+      {% elif trigger.from_state.entity_id == entity_2 %}
+      {{ entity_1 }}, {{ entity_3 }}, {{ entity_4 }}
+      {% elif trigger.from_state.entity_id == entity_3 %}
+      {{ entity_1 }}, {{ entity_2 }}, {{ entity_4 }}
+      {% else %}
+      {{ entity_1 }}, {{ entity_2 }}, {{ entity_3 }}
+      {% endif %}

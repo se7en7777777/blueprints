@@ -1,0 +1,39 @@
+blueprint:
+  name: 开关绑定窗帘
+  description: 通过开关控制窗帘状态，开关打开时窗帘打开，开关关闭时窗帘关闭
+  domain: automation
+  input:
+    switch_entity:
+      name: 选择开关
+      description: 要同步的开关实体
+      selector:
+        entity:
+          domain: switch
+    curtain_entity:
+      name: 选择窗帘
+      description: 要同步的窗帘实体
+      selector:
+        entity:
+          domain: cover
+  source_url: https://github.com/se7en7777777/blueprints/blob/main/chuanglian.yaml
+mode: restart
+max_exceeded: silent
+variables:
+  switch_entity: !input switch_entity
+  curtain_entity: !input curtain_entity
+trigger:
+  - platform: state
+    entity_id: !input switch_entity
+    to:
+      - 'on'
+      - 'off'
+condition: []
+action:
+  - service: >
+      {% if is_state(switch_entity, 'on') %}
+        cover.open_cover
+      {% else %}
+        cover.close_cover
+      {% endif %}
+    data:
+      entity_id: !input curtain_entity

@@ -1,0 +1,36 @@
+blueprint:
+  name: 开关绑定场景
+  description: 选择一个开关和脚本实体，开关打开时运行脚本，延迟100ms后关闭开关
+  domain: automation
+  input:
+    switch_entity:
+      name: 选择绑定的开关
+      description: 要绑定的开关实体
+      selector:
+        entity:
+          domain: switch
+    script_entity:
+      name: 选择要执行的场景（脚本）
+      description: 要运行的脚本实体
+      selector:
+        entity:
+          domain: script
+  source_url: https://github.com/se7en7777777/blueprints/blob/main/scene_bind_to_switch.yaml
+mode: restart
+max_exceeded: silent
+variables:
+  switch_entity: !input switch_entity
+  script_entity: !input script_entity
+trigger:
+  - platform: state
+    entity_id: !input switch_entity
+    to: 'on'
+condition: []
+action:
+  - service: script.turn_on
+    data:
+      entity_id: !input script_entity
+  - delay: '00:00:00.100'  # 延迟100ms
+  - service: switch.turn_off
+    data:
+      entity_id: !input switch_entity

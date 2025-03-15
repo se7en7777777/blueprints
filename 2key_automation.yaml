@@ -1,0 +1,59 @@
+blueprint:
+  name: 二路绑定场景
+  description: 二路开关场景绑定情景模式
+  domain: automation
+  input:
+    entity_1:
+      name: 开关1
+      selector:
+        entity:
+          domain: switch
+    entity_2:
+      name: 开关1绑定的情景模式
+      selector:
+        entity:
+          domain: script
+    entity_3:
+      name: 开关2
+      selector:
+        entity:
+          domain: switch
+    entity_4:
+      name: 开关2绑定的情景模式
+      selector:
+        entity:
+          domain: script
+  source_url: https://github.com/se7en7777777
+mode: restart
+max_exceeded: silent
+variables:
+  entity_map:
+    entity_1: !input entity_1
+    entity_2: !input entity_2
+    entity_3: !input entity_3
+    entity_4: !input entity_4
+
+trigger:
+- platform: state
+  entity_id:
+    - !input entity_1
+    - !input entity_3
+
+  to:
+    - 'off'
+    - 'on'
+
+action:
+- service: homeassistant.turn_on
+  data:
+    entity_id: >
+      {% if trigger.entity_id == entity_map.entity_1 %}
+        {{ entity_map.entity_2 }}
+      {% elif trigger.entity_id == entity_map.entity_3 %}
+        {{ entity_map.entity_4 }}
+      {% else %}
+        none
+      {% endif %}
+- service: homeassistant.turn_off
+  data:
+    entity_id: "{{ trigger.entity_id }}"
